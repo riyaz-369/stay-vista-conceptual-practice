@@ -2,29 +2,28 @@ import Container from "../../components/Shared/Container";
 import { Helmet } from "react-helmet-async";
 import RoomReservation from "../../components/RoomDetails/RoomReservation";
 import Heading from "../../components/Shared/Heading";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosCommon from "../../hooks/useAxiosCommon";
+import { useParams } from "react-router-dom";
+import LoadingSpinner from "../../components/Shared/LoadingSpinner";
 
-// single room object (Fake Data)
-const room = {
-  location: "Pattaya, Thailand",
-  category: "Beach",
-  title: "A15 thebase Sky Pool 1 Bedroom 1/1/Downtown Direct Beach",
-  to: "2024-05-21T18:00:00.000Z",
-  from: "2024-05-19T18:00:00.000Z",
-  price: "100",
-  guests: "2",
-  bathrooms: "1",
-  bedrooms: "1",
-  host: {
-    name: "Shakil Ahmed Atik",
-    image:
-      "https://lh3.googleusercontent.com/a/ACg8ocJL_MZYn95fgATgHT_bWH8Em42gc8quAT57rhhHo4w9-lc-x8G-=s96-c",
-    email: "shakilatik.ph@gmail.com",
-  },
-  description:
-    "Seamlessly evisculate frictionless e-markets through tactical interfaces. Holisticly visualize viral potentialities without mission-critical services.",
-  image: "https://i.ibb.co/BsLQWH6/992ceffe-86d2-42b0-93b8-c24427806cca.webp",
-};
 const RoomDetails = () => {
+  const axiosCommon = useAxiosCommon();
+  const { id } = useParams();
+  // console.log(id);
+
+  const { data: room = {}, isLoading } = useQuery({
+    queryKey: ["room", id],
+    queryFn: async () => {
+      const { data } = await axiosCommon(`/room/${id}`);
+      console.log(data);
+      return data;
+    },
+  });
+  console.log(room);
+
+  if (isLoading) return <LoadingSpinner />;
+
   return (
     <Container>
       <Helmet>
@@ -49,16 +48,7 @@ const RoomDetails = () => {
             {/* Room Info */}
             <div className="col-span-4 flex flex-col gap-8">
               <div className="flex flex-col gap-2">
-                <div
-                  className="
-                text-xl 
-                font-semibold 
-                flex 
-                flex-row 
-                items-center
-                gap-2
-              "
-                >
+                <div className="text-xl font-semibold flex flex-row items-center gap-2">
                   <div>Hosted by {room?.host?.name}</div>
 
                   <img
@@ -69,16 +59,7 @@ const RoomDetails = () => {
                     src={room?.host?.image}
                   />
                 </div>
-                <div
-                  className="
-                flex 
-                flex-row 
-                items-center 
-                gap-4 
-                font-light
-                text-neutral-500
-              "
-                >
+                <div className="flex flex-row items-center gap-4 font-light text-neutral-500">
                   <div>{room?.guests} guests</div>
                   <div>{room?.bedrooms} rooms</div>
                   <div>{room?.bathrooms} bathrooms</div>
@@ -86,10 +67,7 @@ const RoomDetails = () => {
               </div>
 
               <hr />
-              <div
-                className="
-          text-lg font-light text-neutral-500"
-              >
+              <div className="text-lg font-light text-neutral-500">
                 {room?.description}
               </div>
               <hr />

@@ -5,6 +5,8 @@ import AuthProvider from "./providers/AuthProvider";
 import { router } from "./routes/Routes";
 import { Toaster } from "react-hot-toast";
 import { HelmetProvider } from "react-helmet-async";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 

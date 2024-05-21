@@ -16,11 +16,11 @@ const RoomDetails = () => {
     queryKey: ["room", id],
     queryFn: async () => {
       const { data } = await axiosCommon(`/room/${id}`);
-      console.log(data);
+      // console.log(data);
       return data;
     },
   });
-  console.log(room);
+  // console.log(room);
 
   if (isLoading) return <LoadingSpinner />;
 

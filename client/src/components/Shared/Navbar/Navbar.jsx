@@ -4,10 +4,41 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import avatarImg from "../../../assets/images/placeholder.jpg";
+import HostRequestModal from "../../Modal/HostRequestModal";
+import useAxiosCommon from "../../../hooks/useAxiosCommon";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const axiosCommon = useAxiosCommon();
+
+  // for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const modalHandler = async () => {
+    closeModal();
+    try {
+      const currentUser = {
+        email: user?.email,
+        role: "guest",
+        status: "Requested",
+      };
+      const { data } = await axiosCommon.put("/user", currentUser);
+      console.log(data);
+      if (data.modifiedCount > 0) {
+        alert("success, please wait for admin confirmation");
+      } else {
+        alert("success, please wait for admin approval");
+      }
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      closeModal();
+    }
+  };
 
   return (
     <div className="fixed w-full bg-white z-10 shadow-sm">
@@ -29,15 +60,23 @@ const Navbar = () => {
               <div className="flex flex-row items-center gap-3">
                 {/* Become A Host btn */}
                 <div className="hidden md:block">
-                  {!user && (
-                    <button
-                      disabled={!user}
-                      className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
-                    >
-                      Host your home
-                    </button>
-                  )}
+                  {/* {!user && ( */}
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    // disabled={!user}
+                    className="disabled:cursor-not-allowed cursor-pointer hover:bg-neutral-100 py-3 px-4 text-sm font-semibold rounded-full  transition"
+                  >
+                    Host your home
+                  </button>
+                  {/* )} */}
                 </div>
+                {/* Modal */}
+                <HostRequestModal
+                  isOpen={isModalOpen}
+                  closeModal={closeModal}
+                  modalHandler={modalHandler}
+                />
+
                 {/* Dropdown btn */}
                 <div
                   onClick={() => setIsOpen(!isOpen)}
@@ -58,7 +97,7 @@ const Navbar = () => {
                 </div>
               </div>
               {isOpen && (
-                <div className="absolute rounded-xl shadow-md w-[40vw] md:w-[10vw] bg-white overflow-hidden right-0 top-12 text-sm">
+                <div className="absolute rounded-xl shadow-md w-[30vw] md:w-[15vw] bg-white overflow-hidden right-0 top-12 text-sm">
                   <div className="flex flex-col cursor-pointer">
                     <Link
                       to="/"
@@ -69,6 +108,12 @@ const Navbar = () => {
 
                     {user ? (
                       <>
+                        <Link
+                          to="/dashboard"
+                          className="block px-4 py-3 hover:bg-neutral-100 transition font-semibold"
+                        >
+                          Dashboard
+                        </Link>
                         <div
                           onClick={logOut}
                           className="px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer"

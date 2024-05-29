@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import useAxiosCommon from "../../../hooks/useAxiosCommon";
 import useAuth from "../../../hooks/useAuth";
 import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
-import RoomDataRow from "../../../components/Dashboard/RoomDataRow/RoomDataRow";
+import RoomDataRow from "../../../components/Dashboard/TableRows/RoomDataRow";
 
 const MyListings = () => {
   const axiosCommon = useAxiosCommon();
@@ -27,6 +27,7 @@ const MyListings = () => {
       return data;
     },
     onSuccess: (data) => {
+      console.log(data);
       alert("delete successfully");
       refetch();
     },
